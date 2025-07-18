@@ -170,20 +170,35 @@ export const loginService = async (req: Request, res: Response) => {
       email: existUser.email,
       username: existUser.user_name,
     });
-
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true, // only over HTTPS
-      sameSite: 'none', // important if frontend is on different domain
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: false, // ❌ not secure in production
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: true, // only over HTTPS
-      sameSite: 'none', // important if frontend is on different domain,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 15 * 60 * 1000,
     });
+
+    // res.cookie('refreshToken', refreshToken, {
+    //   httpOnly: true,
+    //   secure: false, // only over HTTPS
+    //   sameSite: 'none', // important if frontend is on different domain
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+
+    // res.cookie('accessToken', accessToken, {
+    //   httpOnly: true,
+    //   secure: false, // only over HTTPS
+    //   sameSite: 'none', // important if frontend is on different domain,
+    //   maxAge: 15 * 60 * 1000, // 15 minutes
+    // });
 
     return {
       status: 200,

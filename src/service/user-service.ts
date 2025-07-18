@@ -69,6 +69,7 @@ export const meService = async (req: Request) => {
       'socialLinks.is_deleted = false',
     )
     .where('user.id = :userId', { userId })
+    .andWhere('idCard.is_deleted = false')
     .getOne();
 
   return {
