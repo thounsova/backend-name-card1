@@ -58,18 +58,25 @@ export const getUsersService = async ({
 export const meService = async (req: Request) => {
   const userId = req.user?.user_id;
 
+  if (!userId) {
+    throw new Error('User ID not found in request');
+  }
+
   const userRepo = AppDataSource.getRepository(User);
 
   const data = await userRepo
     .createQueryBuilder('user')
-    .leftJoinAndSelect('user.idCard', 'idCard')
+    .leftJoinAndSelect(
+      'user.idCard',
+      'idCard',
+      'idCard.is_deleted = false', // This ensures even users without idCard are included
+    )
     .leftJoinAndSelect(
       'idCard.socialLinks',
       'socialLinks',
       'socialLinks.is_deleted = false',
     )
     .where('user.id = :userId', { userId })
-    .andWhere('idCard.is_deleted = false')
     .getOne();
 
   return {
